@@ -1,4 +1,0 @@
-<property>
-    <name>mapred.textoutputformat.separator</name>
-    <value>,</value>
-</property>

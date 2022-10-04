@@ -26,9 +26,6 @@ object MRFreqByTime:
       val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
       output.collect(key, new IntWritable(sum.get()))
 
-  class CompositeKey extends WritableComparable:
-
-    def compositeKey(time:Text, count:IntWritable)
 
   @main def runMRFreqByTime(inputPath: String, outputPath: String) =
 
@@ -40,7 +37,7 @@ object MRFreqByTime:
     conf.set("mapreduce.job.maps", "8")
     conf.set("mapreduce.job.reduces", "1")
 
-    conf.set("mapred.textoutputformat.separator", "1")
+    conf.set("mapred.textoutputformat.separator", ",")
 
     conf.setOutputKeyClass(classOf[Text])
     conf.setOutputValueClass(classOf[IntWritable])

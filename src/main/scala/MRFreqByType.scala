@@ -15,6 +15,7 @@ object MRFreqByType:
 
     @throws[IOException]
     def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
+
       val line: String = value.toString
       val msgTypes = List("ERROR","INFO","WARN","DEBUG")
       line.split(" ")
@@ -30,27 +31,27 @@ object MRFreqByType:
       output.collect(key, new IntWritable(sum.get()))
 
   @main def runMRFreqByType(inputPath: String, outputPath: String) =
-    
+
     val conf: JobConf = new JobConf(this.getClass)
-    
+
     conf.setJobName("runMRFreqByType")
-    
+
     conf.set("fs.defaultFS", "local")
-    
-    conf.set("mapreduce.job.maps", "8")
-    conf.set("mapreduce.job.reduces", "2")
-    
+
+    conf.set("mapreduce.job.maps", "2")
+    conf.set("mapreduce.job.reduces", "1")
+
     conf.setOutputKeyClass(classOf[Text])
     conf.setOutputValueClass(classOf[IntWritable])
-    
+
     conf.setMapperClass(classOf[Map])
     conf.setCombinerClass(classOf[Reduce])
     conf.setReducerClass(classOf[Reduce])
-    
+
     conf.setInputFormat(classOf[TextInputFormat])
     conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
-    
+
     FileInputFormat.setInputPaths(conf, new Path(inputPath))
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
-    
+
     JobClient.runJob(conf)
