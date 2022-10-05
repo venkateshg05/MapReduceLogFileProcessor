@@ -5,13 +5,39 @@ import org.apache.hadoop.util.*
 import org.apache.hadoop.mapred.*
 
 import java.io.IOException
+import java.time.LocalTime
 import java.util
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters.*
 
 object MRFreqByTime:
   class Map extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable] :
     private final val one = new IntWritable(1)
     private val word = new Text()
+
+    @tailrec
+    def getTimeInterval(
+       startTime: LocalTime,
+       endTime: LocalTime,
+       lowerBound: LocalTime,
+       upperBound: LocalTime,
+       time: LocalTime,
+       interval: Int
+     ): String = {
+      // print(lowerBound, time, upperBound, interval)
+      // println()
+      if (time.compareTo(endTime) > -1) "Terminate"
+      else {
+        val gtLowerBound = time.compareTo(lowerBound) == 1
+        val ltUpperBound = time.compareTo(upperBound) == -1
+        if ((gtLowerBound && ltUpperBound))
+          lowerBound.toString + ", " + upperBound.toString
+        else
+          getTimeInterval(
+            startTime, endTime, upperBound.plusMinutes(1), upperBound.plusMinutes(interval), time, interval
+          )
+      }
+    }
 
     @throws[IOException]
     def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
