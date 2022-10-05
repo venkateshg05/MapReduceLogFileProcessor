@@ -16,7 +16,7 @@ object MRFreqByTime:
     private val word = new Text()
 
     @tailrec
-    def getTimeInterval(
+    private def getTimeInterval(
        startTime: LocalTime,
        endTime: LocalTime,
        lowerBound: LocalTime,
