@@ -5,37 +5,45 @@ import org.apache.hadoop.util.*
 import org.apache.hadoop.mapred.*
 
 import java.io.IOException
-import java.time.LocalTime
+import java.time.{LocalTime, Duration}
 import java.util
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters.*
 
-object MRFreqByTime:
+object MRFreqByMsgTypeNTime:
   class Map extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable] :
     private final val one = new IntWritable(1)
     private val word = new Text()
 
     @tailrec
-    private def getTimeInterval(
-       startTime: LocalTime,
-       endTime: LocalTime,
-       lowerBound: LocalTime,
-       upperBound: LocalTime,
-       time: LocalTime,
-       interval: Int
-     ): String = {
-      // print(lowerBound, time, upperBound, interval)
-      // println()
-      if (time.compareTo(endTime) > -1) "Terminate"
+    private def getTimeInterval(startTime: LocalTime, lowerBound: Int, upperBound: Int, time: LocalTime, interval: Int): String = {
+
+      // calculate the mid index
+      val sum = lowerBound + upperBound
+      val mid = if sum % 2 == 0 then (sum) / 2 else (sum / 2) + 1
+
+      // calculate the actual time interval for the begin, mid & end indices
+      val intervalBegin = startTime.plusMinutes(lowerBound * interval)
+      val intervalEnd = startTime.plusMinutes(upperBound * interval)
+      val intervalMid = startTime.plusMinutes(mid * interval)
+
+      // Terminating condition - log time lies in previous interval [begin, end]
+      if (mid >= upperBound)
+        intervalBegin.plusMinutes(1).toString + ", " + intervalEnd.toString
       else {
-        val gtLowerBound = time.compareTo(lowerBound) == 1
-        val ltUpperBound = time.compareTo(upperBound) == -1
-        if ((gtLowerBound && ltUpperBound))
-          lowerBound.toString + ", " + upperBound.toString
-        else
-          getTimeInterval(
-            startTime, endTime, upperBound.plusMinutes(1), upperBound.plusMinutes(interval), time, interval
-          )
+        // Terminating condition - log time lies in interval end boundaries [begin, end]
+        if (time.compareTo(intervalEnd) == 0) {
+          intervalEnd.minusMinutes(interval - 1).toString + ", " + intervalEnd.toString
+        }
+        else if (time.compareTo(intervalMid) == 0) {
+          intervalMid.minusMinutes(interval - 1).toString + ", " + intervalMid.toString
+        }
+        // smaller interval possible, continue binary search
+        else if (time.isAfter(intervalBegin) && time.isBefore(intervalMid)) {
+          getTimeInterval(startTime, lowerBound, mid, time, interval)
+        } else {
+          getTimeInterval(startTime, mid, upperBound, time, interval)
+        }
       }
     }
 
@@ -44,7 +52,14 @@ object MRFreqByTime:
       val line: String = value.toString
       val msgTime:String = line.substring(0,5)
       val msgType:String = line.split(" ")(2)
-      word.set(msgType + ", " + msgTime)
+
+      val msgTimeStamp = LocalTime.parse(msgTime)
+      val startTime = LocalTime.parse("12:00") //Parameters.startTime
+      val interval = 10 //Parameters.timeInterval
+      val endTime = LocalTime.parse("14:00") //Parameters.endTime
+      val totalDuration = Duration.between(startTime, endTime).toMinutes()
+      val timeInterval = getTimeInterval(startTime, 0, totalDuration.toInt / interval, msgTimeStamp, interval)
+      word.set(msgType + ", " + timeInterval)
       output.collect(word, one)
 
   class Reduce extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable] :
