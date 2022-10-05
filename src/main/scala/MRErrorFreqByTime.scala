@@ -55,9 +55,9 @@ object MRErrorFreqByTime:
 
       if (msgType == "ERROR") {
         val msgTimeStamp = LocalTime.parse(msgTime)
-        val startTime = LocalTime.parse("12:00") //Parameters.startTime
-        val interval = 10 //Parameters.timeInterval
-        val endTime = LocalTime.parse("14:00") //Parameters.endTime
+        val startTime = LocalTime.parse(Parameters.startTime)
+        val interval = Parameters.timeInterval
+        val endTime = LocalTime.parse(Parameters.endTime)
         val totalDuration = Duration.between(startTime, endTime).toMinutes()
         val timeInterval = getTimeInterval(startTime, 0, totalDuration.toInt / interval, msgTimeStamp, interval)
         word.set(msgType + ", " + timeInterval)

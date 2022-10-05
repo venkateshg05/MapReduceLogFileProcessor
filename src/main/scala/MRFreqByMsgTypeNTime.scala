@@ -1,3 +1,4 @@
+import HelperUtils.Parameters
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.conf.*
 import org.apache.hadoop.io.*
@@ -5,7 +6,7 @@ import org.apache.hadoop.util.*
 import org.apache.hadoop.mapred.*
 
 import java.io.IOException
-import java.time.{LocalTime, Duration}
+import java.time.{Duration, LocalTime}
 import java.util
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters.*
@@ -54,9 +55,9 @@ object MRFreqByMsgTypeNTime:
       val msgType:String = line.split(" ")(2)
 
       val msgTimeStamp = LocalTime.parse(msgTime)
-      val startTime = LocalTime.parse("12:00") //Parameters.startTime
-      val interval = 10 //Parameters.timeInterval
-      val endTime = LocalTime.parse("14:00") //Parameters.endTime
+      val startTime = LocalTime.parse(Parameters.startTime)
+      val interval = Parameters.timeInterval
+      val endTime = LocalTime.parse(Parameters.endTime)
       val totalDuration = Duration.between(startTime, endTime).toMinutes()
       val timeInterval = getTimeInterval(startTime, 0, totalDuration.toInt / interval, msgTimeStamp, interval)
       word.set(msgType + ", " + timeInterval)
