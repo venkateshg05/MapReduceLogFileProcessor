@@ -50,9 +50,9 @@ object MRErrorFreqByTime:
     @throws[IOException]
     def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
 
-      val line: String = value.toString.split(" ")
-      val msgTime: String = line(0)
-      val msgType: String = line(2)
+      val line = value.toString.split(" ")
+      val msgTime = line(0)
+      val msgType = line(2)
       val logMsg = line(line.length - 1)
 
       val pattern = Pattern.compile(Parameters.injectedPattern)
