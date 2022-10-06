@@ -8,6 +8,7 @@ import org.apache.hadoop.mapred.*
 import java.io.IOException
 import java.time.{Duration, LocalTime}
 import java.util
+import java.util.regex.Pattern
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters.*
 
@@ -50,18 +51,25 @@ object MRFreqByMsgTypeNTime:
 
     @throws[IOException]
     def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
-      val line: String = value.toString
-      val msgTime:String = line.substring(0,5)
-      val msgType:String = line.split(" ")(2)
 
-      val msgTimeStamp = LocalTime.parse(msgTime)
-      val startTime = LocalTime.parse(Parameters.startTime)
-      val interval = Parameters.timeInterval
-      val endTime = LocalTime.parse(Parameters.endTime)
-      val totalDuration = Duration.between(startTime, endTime).toMinutes()
-      val timeInterval = getTimeInterval(startTime, 0, totalDuration.toInt / interval, msgTimeStamp, interval)
-      word.set(msgType + ", " + timeInterval)
-      output.collect(word, one)
+      val line: String = value.toString.split(" ")
+      val msgTime: String = line(0)
+      val msgType: String = line(2)
+      val logMsg = line(line.length - 1)
+
+      val pattern = Pattern.compile(Parameters.injectedPattern)
+      val msgHasPattern = pattern.matcher(logMsg).find()
+
+      if (msgHasPattern) {
+        val msgTimeStamp = LocalTime.parse(msgTime)
+        val startTime = LocalTime.parse(Parameters.startTime)
+        val interval = Parameters.timeInterval
+        val endTime = LocalTime.parse(Parameters.endTime)
+        val totalDuration = Duration.between(startTime, endTime).toMinutes()
+        val timeInterval = getTimeInterval(startTime, 0, totalDuration.toInt / interval, msgTimeStamp, interval)
+        word.set(msgType + ", " + timeInterval)
+        output.collect(word, one)
+      }
 
   class Reduce extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable] :
     override def reduce(key: Text, values: util.Iterator[IntWritable], output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =

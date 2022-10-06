@@ -4,8 +4,9 @@ import org.apache.hadoop.io.{IntWritable, LongWritable, Text}
 import org.apache.hadoop.mapred.{FileInputFormat, FileOutputFormat, JobClient, JobConf, MapReduceBase, Mapper, OutputCollector, Reducer, Reporter, TextInputFormat, TextOutputFormat}
 
 import java.io.IOException
-import java.time.{LocalTime, Duration}
+import java.time.{Duration, LocalTime}
 import java.util
+import java.util.regex.Pattern
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters.*
 
@@ -49,11 +50,15 @@ object MRErrorFreqByTime:
     @throws[IOException]
     def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
 
-      val line: String = value.toString
-      val msgTime: String = line.substring(0, 12)
-      val msgType: String = line.split(" ")(2)
+      val line: String = value.toString.split(" ")
+      val msgTime: String = line(0)
+      val msgType: String = line(2)
+      val logMsg = line(line.length - 1)
 
-      if (msgType == "ERROR") {
+      val pattern = Pattern.compile(Parameters.injectedPattern)
+      val msgHasPattern = pattern.matcher(logMsg).find()
+
+      if (msgType == "ERROR" && msgHasPattern) {
         val msgTimeStamp = LocalTime.parse(msgTime)
         val startTime = LocalTime.parse(Parameters.startTime)
         val interval = Parameters.timeInterval

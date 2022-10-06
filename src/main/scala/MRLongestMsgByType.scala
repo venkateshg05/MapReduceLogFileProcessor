@@ -1,14 +1,14 @@
-import org.apache.hadoop.fs.Path
 import org.apache.hadoop.conf.*
+import org.apache.hadoop.fs.Path
 import org.apache.hadoop.io.*
-import org.apache.hadoop.util.*
 import org.apache.hadoop.mapred.*
+import org.apache.hadoop.util.*
 
 import java.io.IOException
 import java.util
 import scala.jdk.CollectionConverters.*
 
-object MRFreqByType:
+object MRLongestMsgByType:
   class Map extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable] :
     private final val one = new IntWritable(1)
     private val word = new Text()
@@ -30,11 +30,11 @@ object MRFreqByType:
       val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
       output.collect(key, new IntWritable(sum.get()))
 
-  @main def runMRFreqByType(inputPath: String, outputPath: String) =
+  @main def runMRLongestMsgByType(inputPath: String, outputPath: String) =
 
     val conf: JobConf = new JobConf(this.getClass)
 
-    conf.setJobName("runMRFreqByType")
+    conf.setJobName("runMRLongestMsgByType")
 
     conf.set("fs.defaultFS", "local")
 

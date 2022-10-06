@@ -44,9 +44,10 @@ object Parameters:
     }
   end getParam
 
-  val startTime = getParam("startTime", "12:00")
-  val endTime = getParam("endTime", "14:00")
-  val timeInterval = getParam("timeInterval", 5)
+  val startTime = getParam("StartTime", "12:00")
+  val endTime = getParam("EndTime", "14:00")
+  val timeInterval = getParam("TimeInterval", 5)
+  val injectedPattern = getParam("Pattern", 5)
 
 
 
