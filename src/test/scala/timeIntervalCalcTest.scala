@@ -2,7 +2,6 @@ import HelperUtils.{Parameters, GetTimeInterval}
 
 import org.scalatest.{funsuite}
 import java.time.{Duration, LocalTime}
-import scala.io.BufferedSource
 
 class timeIntervalCalcTest extends funsuite.AnyFunSuite {
   test("getTimeInterval") {
