@@ -38,31 +38,3 @@ object MRLongestMsgByType:
       def getMax(value1:IntWritable, value2:IntWritable):IntWritable = if value1.get() > value2.get() then value1 else value2
       val maxLen = values.asScala.reduceLeft(getMax)
       output.collect(key, maxLen)
-
-  @main def runMRLongestMsgByType(inputPath: String, outputPath: String) =
-
-    val conf: JobConf = new JobConf(this.getClass)
-
-    conf.setJobName("runMRLongestMsgByType")
-
-    conf.set("fs.defaultFS", "local")
-
-    conf.set("mapreduce.job.maps", "2")
-    conf.set("mapreduce.job.reduces", "1")
-
-    conf.set("mapreduce.output.textoutputformat.separator", ",")
-
-    conf.setOutputKeyClass(classOf[Text])
-    conf.setOutputValueClass(classOf[IntWritable])
-
-    conf.setMapperClass(classOf[Map])
-    conf.setCombinerClass(classOf[Reduce])
-    conf.setReducerClass(classOf[Reduce])
-
-    conf.setInputFormat(classOf[TextInputFormat])
-    conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
-
-    FileInputFormat.setInputPaths(conf, new Path(inputPath))
-    FileOutputFormat.setOutputPath(conf, new Path(outputPath))
-
-    JobClient.runJob(conf)
