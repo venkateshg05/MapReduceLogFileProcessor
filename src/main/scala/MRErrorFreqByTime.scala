@@ -52,7 +52,7 @@ object MRErrorFreqByTime:
     conf.set("mapreduce.job.maps", "8")
     conf.set("mapreduce.job.reduces", "1")
 
-    conf.set("mapred.textoutputformat.separator", ",")
+    conf.set("mapreduce.output.textoutputformat.separator", ",")
 
     conf.setOutputKeyClass(classOf[Text])
     conf.setOutputValueClass(classOf[IntWritable])
