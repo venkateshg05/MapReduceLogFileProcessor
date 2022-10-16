@@ -7,15 +7,24 @@ import scala.jdk.CollectionConverters.*
 
 object MRDriver {
 
-  def runMRFreqByTypeNTime(inputPath: String, outputPath: String) =
+  /*
+    Functionality: Runs the four M/R jobs with the correct output path
+   */
+
+  def runMRFreqByTypeNTime(inputPath: String, outputPath: String, numOfMappers:String, numOfReducers:String) =
+    /*
+    Inputs: Takes the input & output paths, number of mappers & reducers
+    Outputs: None
+    Functionality: initializes the job, mappers & reducers, sets the I/O formats, runs the job
+    * */
+
 
     val conf: JobConf = new JobConf(this.getClass)
 
     conf.setJobName("runMRFreqByTypeNTime")
 
-    conf.set("fs.defaultFS", "local")
-    conf.set("mapreduce.job.maps", "8")
-    conf.set("mapreduce.job.reduces", "1")
+    conf.set("mapreduce.job.maps", numOfMappers)
+    conf.set("mapreduce.job.reduces", numOfReducers)
 
     conf.set("mapreduce.output.textoutputformat.separator", ",")
 
@@ -34,16 +43,19 @@ object MRDriver {
 
     JobClient.runJob(conf)
 
-  def runMRFreqByType(inputPath: String, outputPath: String) =
+  def runMRFreqByType(inputPath: String, outputPath: String, numOfMappers:String, numOfReducers:String) =
+    /*
+        Inputs: Takes the input & output paths, number of mappers & reducers
+        Outputs: None
+        Functionality: initializes the job, mappers & reducers, sets the I/O formats, runs the job
+        * */
 
     val conf: JobConf = new JobConf(this.getClass)
 
     conf.setJobName("runMRFreqByType")
 
-    conf.set("fs.defaultFS", "local")
-
-    conf.set("mapreduce.job.maps", "2")
-    conf.set("mapreduce.job.reduces", "1")
+    conf.set("mapreduce.job.maps", numOfMappers)
+    conf.set("mapreduce.job.reduces", numOfReducers)
 
     conf.set("mapreduce.output.textoutputformat.separator", ",")
 
@@ -62,15 +74,19 @@ object MRDriver {
 
     JobClient.runJob(conf)
 
-  def runMRErrorFreqByTime(inputPath: String, outputPath: String) =
+  def runMRErrorFreqByTime(inputPath: String, outputPath: String, numOfMappers:String, numOfReducers:String) =
+    /*
+        Inputs: Takes the input & output paths, number of mappers & reducers
+        Outputs: None
+        Functionality: initializes the job, mappers & reducers, sets the I/O formats, runs the job
+        * */
 
     val conf: JobConf = new JobConf(this.getClass)
 
     conf.setJobName("runMRErrorFreqByTime")
 
-    conf.set("fs.defaultFS", "local")
-    conf.set("mapreduce.job.maps", "8")
-    conf.set("mapreduce.job.reduces", "1")
+    conf.set("mapreduce.job.maps", numOfMappers)
+    conf.set("mapreduce.job.reduces", numOfReducers)
 
     conf.set("mapreduce.output.textoutputformat.separator", ",")
 
@@ -89,16 +105,19 @@ object MRDriver {
 
     JobClient.runJob(conf)
 
-  def runMRLongestMsgByType(inputPath: String, outputPath: String) =
+  def runMRLongestMsgByType(inputPath: String, outputPath: String, numOfMappers:String, numOfReducers:String) =
+    /*
+        Inputs: Takes the input & output paths, number of mappers & reducers
+        Outputs: None
+        Functionality: initializes the job, mappers & reducers, sets the I/O formats, runs the job
+        * */
 
     val conf: JobConf = new JobConf(this.getClass)
 
     conf.setJobName("runMRLongestMsgByType")
 
-    conf.set("fs.defaultFS", "local")
-
-    conf.set("mapreduce.job.maps", "2")
-    conf.set("mapreduce.job.reduces", "1")
+    conf.set("mapreduce.job.maps", numOfMappers)
+    conf.set("mapreduce.job.reduces", numOfReducers)
 
     conf.set("mapreduce.output.textoutputformat.separator", ",")
 
@@ -118,9 +137,14 @@ object MRDriver {
     JobClient.runJob(conf)
 
   @main def runMRProcesses(inputPath: String, outputPath: String) =
-    runMRLongestMsgByType(inputPath, outputPath + "\\output_LongestMsg_by_MsgType")
-    runMRFreqByTypeNTime(inputPath, outputPath + "\\output_freq_by_msgType_timeInterval")
-    runMRFreqByType(inputPath, outputPath + "\\output_freq_by_msgType")
-    runMRErrorFreqByTime(inputPath, outputPath + "\\output_freq_by_error_timeInterval")
+    /*
+        Inputs: Takes the input & output paths, number of mappers & reducers
+        Outputs: None
+        Functionality: Runs the four M/R jobs with the correct output path
+        * */
+    runMRLongestMsgByType(inputPath, outputPath + "\\output_LongestMsg_by_MsgType", Parameters.numMappers, Parameters.numReducers)
+    runMRFreqByTypeNTime(inputPath, outputPath + "\\output_freq_by_msgType_timeInterval", Parameters.numMappers, Parameters.numReducers)
+    runMRFreqByType(inputPath, outputPath + "\\output_freq_by_msgType", Parameters.numMappers, Parameters.numReducers)
+    runMRErrorFreqByTime(inputPath, outputPath + "\\output_freq_by_error_timeInterval", Parameters.numMappers, Parameters.numReducers)
 
 }

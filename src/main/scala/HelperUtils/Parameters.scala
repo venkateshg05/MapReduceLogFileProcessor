@@ -48,6 +48,8 @@ object Parameters:
   val endTime = getParam("EndTime", "14:00")
   val timeInterval = getParam("TimeInterval", 5)
   val injectedPattern = getParam("Pattern", "([a-c][e-g][0-3]|[A-Z][5-9][f-w]){5,15}")
+  val numMappers = getParam("NumMappers", "1")
+  val numReducers = getParam("NumReducers", "1")
 
 
 
