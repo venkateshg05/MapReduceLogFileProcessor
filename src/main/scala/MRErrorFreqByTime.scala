@@ -1,4 +1,4 @@
-import HelperUtils.{Parameters, GetTimeInterval}
+import HelperUtils.{Parameters, GetTimeInterval, CheckRegexPattern}
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.io.{IntWritable, LongWritable, Text}
 import org.apache.hadoop.mapred.{FileInputFormat, FileOutputFormat, JobClient, JobConf, MapReduceBase, Mapper, OutputCollector, Reducer, Reporter, TextInputFormat, TextOutputFormat}
@@ -22,15 +22,6 @@ object MRErrorFreqByTime:
 //    To store the output key
     private val word = new Text()
 
-    private def checkPattern(msg:String) =
-      /*
-      Checks if the log message has injected pattern
-      by matching against the pattern in the config file
-      */
-      val pattern = Pattern.compile(Parameters.injectedPattern)
-      val msgHasPattern = pattern.matcher(msg).find()
-      msgHasPattern
-
     @throws[IOException]
     def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
       /*
@@ -46,7 +37,7 @@ object MRErrorFreqByTime:
       val logMsg = line(line.length - 1)
 
       /*Check if the log message has injected pattern*/
-      val msgHasPattern = checkPattern(logMsg)
+      val msgHasPattern = CheckRegexPattern.checkPattern(logMsg) //checkPattern(logMsg)
 
       /*If message type is error & has pattern*/
       if (msgType == "ERROR" && msgHasPattern) {
