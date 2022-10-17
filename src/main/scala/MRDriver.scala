@@ -1,11 +1,13 @@
-import HelperUtils.Parameters
+import HelperUtils.{CreateLogger, Parameters}
 import org.apache.hadoop.conf.*
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.io.*
 import org.apache.hadoop.mapred.*
+
 import scala.jdk.CollectionConverters.*
 
 object MRDriver {
+  private val logger = CreateLogger(classOf[MRDriver.type])
 
   /*
     Functionality: Runs the four M/R jobs with the correct output path
@@ -43,6 +45,8 @@ object MRDriver {
 
     JobClient.runJob(conf)
 
+    logger.info("Completed runMRFreqByTypeNTime")
+
   def runMRFreqByType(inputPath: String, outputPath: String, numOfMappers:String, numOfReducers:String) =
     /*
         Inputs: Takes the input & output paths, number of mappers & reducers
@@ -73,6 +77,7 @@ object MRDriver {
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
 
     JobClient.runJob(conf)
+    logger.info("Completed runMRFreqByType")
 
   def runMRErrorFreqByTime(inputPath: String, outputPath: String, numOfMappers:String, numOfReducers:String) =
     /*
@@ -104,6 +109,7 @@ object MRDriver {
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
 
     JobClient.runJob(conf)
+    logger.info("Completed runMRErrorFreqByTime")
 
   def runMRLongestMsgByType(inputPath: String, outputPath: String, numOfMappers:String, numOfReducers:String) =
     /*
@@ -135,6 +141,7 @@ object MRDriver {
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
 
     JobClient.runJob(conf)
+    logger.info("Completed runMRLongestMsgByType")
 
   @main def runMRProcesses(inputPath: String, outputPath: String) =
     /*
@@ -146,5 +153,7 @@ object MRDriver {
     runMRFreqByTypeNTime(inputPath, outputPath + "\\output_freq_by_msgType_timeInterval", Parameters.numMappers, Parameters.numReducers)
     runMRFreqByType(inputPath, outputPath + "\\output_freq_by_msgType", Parameters.numMappers, Parameters.numReducers)
     runMRErrorFreqByTime(inputPath, outputPath + "\\output_freq_by_error_timeInterval", Parameters.numMappers, Parameters.numReducers)
+
+    logger.info("Completed all MR processes")
 
 }

@@ -1,4 +1,4 @@
-import HelperUtils.{Parameters, GetTimeInterval, CheckRegexPattern}
+import HelperUtils.{CheckRegexPattern, GetTimeInterval, Parameters}
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.io.{IntWritable, LongWritable, Text}
 import org.apache.hadoop.mapred.{FileInputFormat, FileOutputFormat, JobClient, JobConf, MapReduceBase, Mapper, OutputCollector, Reducer, Reporter, TextInputFormat, TextOutputFormat}

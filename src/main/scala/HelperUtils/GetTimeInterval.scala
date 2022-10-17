@@ -6,12 +6,14 @@ import java.util
 import java.util.regex.Pattern
 
 object GetTimeInterval {
+  private val logger = CreateLogger(classOf[GetTimeInterval.type])
 
   @tailrec
   def getTimeInterval(startTime: LocalTime, lowerBound: Int, upperBound: Int, time: LocalTime, interval: Int): String = {
 
     // time not with in interval
     if (time.isBefore(startTime) || time.isAfter(startTime.plusMinutes(upperBound * interval))) {
+      logger.warn(time.toString + " is out of bounds for st: " + startTime.toString + " end: " + startTime.plusMinutes(upperBound * interval).toString)
       "Time not within bounds"
     }
     else {
