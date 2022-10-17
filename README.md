@@ -4,6 +4,7 @@ UIN: 655290219
 NetID: vgopal9@uic.edu
 
 Using Hadoop Map/Reduce concept, this program processes log files &amp; produce the required statistics 
+AWS Deployment YouTube link: https://youtu.be/trSEGND79lE
 
 Program design and models 
 The entry point to the program is the MRDriver object. It sets up the 4 M/R processes designed for the 4 tasks. 
